@@ -3,10 +3,6 @@ sudo: false
 
 # run builds for all the trains (and more)
 rust:
-- 1.12.0
-- 1.13.0
-- stable
-- beta
 - nightly
 
 before_script:
@@ -16,13 +12,10 @@ before_script:
 
 script:
 - |
-    travis-cargo build -- --features with-syntex &&
-    travis-cargo test -- --features with-syntex &&
-    travis-cargo bench -- --features with-syntex &&
     travis-cargo --only nightly build &&
     travis-cargo --only nightly test -- --features unstable-testing &&
     travis-cargo --only nightly bench &&
-    travis-cargo --only stable doc -- --features with-syntex
+    travis-cargo --only stable doc 
 
 env:
   global:

@@ -1,4 +1,6 @@
 use syntax::ast;
+use syntax::symbol;
+use syntax::tokenstream;
 use syntax::codemap::DUMMY_SP;
 
 use aster::AstBuilder;
@@ -11,13 +13,15 @@ fn test_doc() {
         ast::Attribute {
             id: ast::AttrId(0),
             style: ast::AttrStyle::Outer,
-            value: ast::MetaItem {
-                name: builder.symbol("doc"),
-                node: ast::MetaItemKind::NameValue(
-                    (*builder.lit().str("/// doc string")).clone(),
-                ),
+            path: ast::Path {
                 span: DUMMY_SP,
+                segments: vec![ast::PathSegment{
+                    identifier: symbol::Ident::from_str("doc"),
+                    span: DUMMY_SP,
+                    parameters: None,
+                }],
             },
+            tokens: tokenstream::TokenStream::empty(),
             is_sugared_doc: true,
             span: DUMMY_SP,
         }

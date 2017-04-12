@@ -1,12 +1,10 @@
-#![cfg_attr(not(feature = "with-syntex"), feature(rustc_private, i128_type))]
 #![cfg_attr(feature = "clippy", feature(plugin))]
 #![cfg_attr(feature = "clippy", plugin(clippy))]
 #![cfg_attr(feature = "clippy", allow(wrong_self_convention))]
 
-#[cfg(feature = "with-syntex")]
-extern crate syntex_syntax as syntax;
+#![feature(i128_type)]
+#![feature(rustc_private)]
 
-#[cfg(not(feature = "with-syntex"))]
 extern crate syntax;
 
 use syntax::ast;

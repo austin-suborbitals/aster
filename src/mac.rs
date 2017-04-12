@@ -2,10 +2,11 @@ use syntax::ast;
 use syntax::codemap::{self, DUMMY_SP, Span, respan};
 use syntax::ext::base::{DummyResolver, ExtCtxt};
 use syntax::ext::expand;
+use syntax::ext::hygiene;
 use syntax::ext::quote::rt::ToTokens;
 use syntax::parse::ParseSess;
 use syntax::ptr::P;
-use syntax::tokenstream::TokenTree;
+use syntax::tokenstream::{TokenTree, TokenStream};
 
 use expr::ExprBuilder;
 use invoke::{Invoke, Identity};
@@ -107,7 +108,7 @@ impl<F> MacPathBuilder<F>
     pub fn build(self) -> F::Result {
         let mac = ast::Mac_ {
             path: self.path,
-            tts: self.tokens,
+            tts: TokenStream::concat(self.tokens.into_iter().map(|x| TokenStream::from(x)).collect()).into()
         };
         self.callback.invoke(respan(self.span, mac))
     }
@@ -136,9 +137,12 @@ fn make_ext_ctxt<'a>(sess: &'a ParseSess,
         }
     };
 
+    let mark = hygiene::Mark::fresh();
+    mark.set_expn_info(info);
+
     let ecfg = expand::ExpansionConfig::default(String::new());
-    let mut cx = ExtCtxt::new(sess, ecfg, macro_loader);
-    cx.bt_push(info);
+    let cx = ExtCtxt::new(sess, ecfg, macro_loader);
+    cx.backtrace().apply_mark(mark);
 
     cx
 }
