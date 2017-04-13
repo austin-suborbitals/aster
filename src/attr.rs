@@ -53,7 +53,8 @@ impl<F> AttrBuilder<F>
     }
 
     pub fn build_meta_item(self, item: ast::MetaItem) -> F::Result {
-        let attr = attr::mk_attr_outer(self.span, attr::mk_attr_id(), item);
+        let mut attr = attr::mk_attr_outer(self.span, attr::mk_attr_id(), item);
+        attr.is_sugared_doc = self.is_sugared_doc;
         self.callback.invoke(attr)
     }
 

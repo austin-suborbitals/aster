@@ -5,7 +5,6 @@ use syntax::print::pprust;
 use syntax::ptr::P;
 use syntax::symbol;
 use syntax::symbol::keywords;
-use syntax::tokenstream;
 
 use aster::AstBuilder;
 use aster::ident::ToIdent;
@@ -418,7 +417,7 @@ fn test_attr() {
                             parameters: None,
                         }],
                     },
-                    tokens: tokenstream::TokenStream::empty(),
+                    tokens: ast::MetaItemKind::NameValue((*builder.lit().str("/// doc string")).clone()).tokens(DUMMY_SP),
                     is_sugared_doc: true,
                     span: DUMMY_SP,
                 }

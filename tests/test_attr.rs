@@ -1,6 +1,5 @@
 use syntax::ast;
 use syntax::symbol;
-use syntax::tokenstream;
 use syntax::codemap::DUMMY_SP;
 
 use aster::AstBuilder;
@@ -21,7 +20,7 @@ fn test_doc() {
                     parameters: None,
                 }],
             },
-            tokens: tokenstream::TokenStream::empty(),
+            tokens: ast::MetaItemKind::NameValue((*builder.lit().str("/// doc string")).clone()).tokens(DUMMY_SP),
             is_sugared_doc: true,
             span: DUMMY_SP,
         }

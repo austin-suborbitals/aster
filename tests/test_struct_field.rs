@@ -1,8 +1,6 @@
-use syntax;
 use syntax::ast;
 use syntax::codemap::DUMMY_SP;
 use syntax::symbol;
-use syntax::parse;
 use syntax::tokenstream;
 
 use aster::AstBuilder;
@@ -45,7 +43,7 @@ fn test_unnamed() {
 fn test_attrs() {
     let builder = AstBuilder::new();
 
-    let expect = 
+    assert_eq!(
         ast::StructField {
             ident: Some(builder.id("x")),
             vis: ast::Visibility::Inherited,
@@ -64,15 +62,7 @@ fn test_attrs() {
                             parameters: None,
                         }],
                     },
-                    tokens: tokenstream::TokenStream::from(
-                        tokenstream::TokenTree::Token(
-                            DUMMY_SP,
-                            parse::token::Token::Literal(
-                                parse::token::Lit::Str_(ast::Name::intern("/// doc string")),
-                                None,
-                            )
-                        )
-                    ),
+                    tokens: ast::MetaItemKind::NameValue((*builder.lit().str("/// doc string")).clone()).tokens(DUMMY_SP),
                     is_sugared_doc: true,
                     span: DUMMY_SP,
                 },
@@ -92,15 +82,10 @@ fn test_attrs() {
                     span: DUMMY_SP,
                 },
             ],
-        };
-
-    let made = builder.struct_field("x")
-        .attr().doc("/// doc string")
-        .attr().automatically_derived()
-        .ty().isize();
-
-    assert_eq!(
-        made,
-        expect
+        },
+        builder.struct_field("x")
+            .attr().doc("/// doc string")
+            .attr().automatically_derived()
+            .ty().isize()
     );
 }
